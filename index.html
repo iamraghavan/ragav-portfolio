@@ -449,6 +449,72 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+        // Function to submit the form
+        function submitForm() {
+            // Validate the reCAPTCHA response
+            var captchaResponse = grecaptcha.getResponse();
+            if (!captchaResponse) {
+                alert("Please complete the reCAPTCHA.");
+                return;
+            }
+    
+            // Collect form data
+            var formData = {
+                name: document.querySelector('input[name="name"]').value,
+                email: document.querySelector('input[name="email"]').value,
+                phone: document.querySelector('input[name="phone"]').value,
+                subject: document.querySelector('input[name="subject"]').value,
+                message: document.querySelector('textarea[name="message"]').value,
+                // Add the reCAPTCHA response to the data
+                'g-recaptcha-response': captchaResponse
+            };
+    
+            // Create a URL-encoded string from the form data
+            var encodedData = Object.keys(formData)
+                .map(function (key) {
+                    return encodeURIComponent(key) + "=" + encodeURIComponent(formData[key]);
+                })
+                .join("&");
+    
+            // Define the URL where you want to send the data
+            var url = "YOUR_BACKEND_SCRIPT_URL"; // Replace with your backend script URL
+    
+            // Send the data to your backend using JavaScript (e.g., fetch or XMLHttpRequest)
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: encodedData
+            })
+                .then(function (response) {
+                    if (response.ok) {
+                        // If the request was successful, display the success message
+                        document.getElementById("success").style.display = "block";
+                        document.getElementById("error").style.display = "none";
+                        // Clear form fields
+                        document.querySelector('input[name="name"]').value = "";
+                        document.querySelector('input[name="email"]').value = "";
+                        document.querySelector('input[name="phone"]').value = "";
+                        document.querySelector('input[name="subject"]').value = "";
+                        document.querySelector('textarea[name="message"]').value = "";
+                        // Reset reCAPTCHA
+                        grecaptcha.reset();
+                    } else {
+                        // If there was an error, display the error message
+                        document.getElementById("error").style.display = "block";
+                        document.getElementById("success").style.display = "none";
+                    }
+                })
+                .catch(function (error) {
+                    console.error("Error:", error);
+                });
+        }
+    </script>
+
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/wow.min.js"></script>
